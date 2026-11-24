@@ -48,3 +48,28 @@ grochr/
 │           ├── PriceCompare.jsx
 │           ├── Cart.jsx
 │           └── Checkout.jsx
+grochr/
+├── server/
+│   ├── package.json
+│   ├── db.js
+│   ├── seed.js
+│   ├── auth.js
+│   ├── index.js
+│   └── services/
+│       ├── deliveryAdapters.js
+│       └── routing.js
+├── client/
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── index.html
+│   └── src/
+│       ├── main.jsx
+│       ├── styles.css
+│       ├── api.js
+│       ├── App.jsx
+│       └── components/
+│           ├── ProductCard.jsx
+│           ├── CartDrawer.jsx
+│           ├── CheckoutModal.jsx
+│           └── AuthModal.jsx
+└── README.md
