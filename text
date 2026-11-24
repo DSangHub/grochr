@@ -19,3 +19,32 @@
 Postgres        Redis            S3/CDN
 (products,      (cache,          (flyer PDFs,
  orders)         sessions)        images)
+grochr/
+├── server/
+│   ├── package.json
+│   ├── index.js
+│   ├── db.js
+│   ├── seed.js
+│   ├── auth.js
+│   ├── routes/
+│   │   ├── flyers.js
+│   │   ├── products.js
+│   │   ├── cart.js
+│   │   ├── orders.js
+│   │   └── delivery.js
+│   └── services/
+│       ├── routing.js
+│       └── deliveryAdapters.js
+├── client/
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── index.html
+│   └── src/
+│       ├── main.jsx
+│       ├── App.jsx
+│       ├── api.js
+│       └── components/
+│           ├── FlyerBrowser.jsx
+│           ├── PriceCompare.jsx
+│           ├── Cart.jsx
+│           └── Checkout.jsx
