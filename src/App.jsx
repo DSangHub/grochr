@@ -3,6 +3,7 @@ import { api, setToken, clearToken } from './api.js';
 import ProductCard from './components/ProductCard.jsx';
 import CartDrawer from './components/CartDrawer.jsx';
 import CheckoutModal from './components/CheckoutModal.jsx';
+import WeeklyEssentials from './components/WeeklyEssentials.jsx';
 import AuthModal from './components/AuthModal.jsx';
 
 export default function App() {
@@ -53,6 +54,20 @@ export default function App() {
     setToken(token); setUser(user); setShowAuth(false); flash('Signed in as guest');
   }
 
+  async function orderWeekly(list) {
+    const products=await api.products();
+    const selected=list.map(item=>({item,offer:products.filter(p=>p.name===item.name).sort((a,b)=>a.unit_price-b.unit_price)[0]}));
+    if(selected.some(x=>!x.offer))throw new Error('Some essentials are unavailable. Update your list before ordering.');
+    if(!user)await onGuest();
+    const existing=await api.cart();
+    for(const {item,offer} of selected){
+      const row=existing.items.find(x=>x.id===offer.id);
+      if(row)await api.updateCartItem(row.id,item.qty);
+      else await api.addToCart(offer.id,item.qty);
+    }
+    setCart(await api.cart());setShowCart(true);
+  }
+
   async function addToCart(productId) {
     if (!user) { setShowAuth(true); return; }
     await api.addToCart(productId, 1);
@@ -89,6 +104,7 @@ export default function App() {
       </header>
 
       <section className="hero"><div><span className="eyebrow">YOUR SMART GROCERY COMPANION</span><h2>Save time.<br/>Save money.</h2><p>Combine your purchases from different grocery stores at the lowest available prices. Compare specials, build one shopping cart and explore delivery options.</p><button onClick={async()=>{if(!user)await onGuest();document.getElementById('shop').scrollIntoView({behavior:'smooth'});}}>Start shopping</button><small>Multiple stores. One cart. More savings.</small></div><svg viewBox="0 0 320 280" role="img" aria-label="Red apple with an analog clock"><defs><linearGradient id="apple" x2="1" y2="1"><stop stopColor="#ff6754"/><stop offset="1" stopColor="#a81223"/></linearGradient></defs><ellipse cx="160" cy="258" rx="100" ry="12" fill="#ded9c9"/><path d="M160 66 C89 22 25 78 43 155 C55 220 105 270 160 244 C215 270 265 220 277 155 C295 78 231 22 160 66Z" fill="url(#apple)"/><path d="M160 68 Q155 35 174 15" stroke="#79502d" strokeWidth="10" fill="none" strokeLinecap="round"/><path d="M170 47 Q210 0 259 25 Q226 65 170 47" fill="#368b36"/><circle cx="160" cy="155" r="75" fill="#e0d8c8"/><circle cx="160" cy="155" r="66" fill="#fffdf5"/>{Array.from({length:12},(_,i)=><line key={i} x1="160" y1="96" x2="160" y2="106" stroke="#283b30" strokeWidth="3" transform={'rotate('+i*30+' 160 155)'}/>)}<path d="M123 128 L160 155 L202 121" fill="none" stroke="#283b30" strokeWidth="7" strokeLinecap="round"/><circle cx="160" cy="155" r="6" fill="#b91e2d"/></svg></section>
+      <WeeklyEssentials onOrder={orderWeekly}/>
       <p className="banner">Demo mode — sample grocery prices and delivery estimates. No live orders or payments.</p><section className="controls" id="shop">
         <input
           placeholder="Search products (e.g. chicken, milk, coffee)…"
