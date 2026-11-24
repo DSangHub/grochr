@@ -11,3 +11,9 @@ function selectDelivery(stores, customer, services) {
   }
   return optimizeAssignment(options); // cheapest feasible per store
 }
+const express = require('express');
+const cors = require('cors');
+const app = express();
+app.use(cors());
+app.use(express.json());
+...
