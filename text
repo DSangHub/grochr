@@ -1,0 +1,21 @@
+┌─────────────────────────────────────────────┐
+│  Frontend (Next.js / React)                 │
+│  Flyer browser · Price compare · Cart       │
+└──────────────────┬──────────────────────────┘
+                   │ REST/GraphQL
+┌──────────────────▼──────────────────────────┐
+│  API Gateway (Node.js / NestJS)             │
+├─────────────────────────────────────────────┤
+│  Flyer Ingestion Service  (OCR + normalize) │
+│  Price Comparison Engine  (unit-price calc) │
+│  Cart & Order Service                       │
+│  Routing Engine           (cost/time score) │
+│  Delivery Adapter Layer   (Uber/IC/DD)      │
+│  Payments (Stripe) · Auth · Notifications   │
+└──────────────────┬──────────────────────────┘
+                   │
+   ┌───────────────┼────────────────┐
+   ▼               ▼                ▼
+Postgres        Redis            S3/CDN
+(products,      (cache,          (flyer PDFs,
+ orders)         sessions)        images)
