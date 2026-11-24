@@ -547,6 +547,45 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
-    proxy: { '/api': 'http://localhost:4000' }
-  }
+    proxy: { '/api': 'http://localhost:4000' } 
+  }const BASE = '/api';
+const getToken = () => localStorage.getItem('grochr_token');
+export const setToken = t => localStorage.setItem('grochr_token', t);
+export const clearToken = () => localStorage.removeItem('grochr_token');
+
+async function req(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
+  const token = getToken();
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(BASE + path, { ...opts, headers });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || 'Request failed');
+  return data;
+}
+
+export const api = {
+  guestLogin: () => req('/auth/guest', { method: 'POST' }),
+  login: (email, password) => req('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (email, password, name) =>
+    req('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, name }) }),
+
+  stores: () => req('/stores'),
+  flyers: () => req('/flyers'),
+  products: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return req(`/products${qs ? '?' + qs : ''}`);
+  },
+  compare: q => req(`/products/compare?q=${encodeURIComponent(q)}`),
+
+  cart: () => req('/cart'),
+  addToCart: (productId, qty = 1) =>
+    req('/cart/items', { method: 'POST', body: JSON.stringify({ productId, qty }) }),
+  updateCartItem: (id, qty) =>
+    req(`/cart/items/${id}`, { method: 'PATCH', body: JSON.stringify({ qty }) }),
+  removeCartItem: id => req(`/cart/items/${id}`, { method: 'DELETE' }),
+
+  quoteOrder: () => req('/orders/quote', { method: 'POST' }),
+  checkout: () => req('/orders/checkout', { method: 'POST' }),
+  orders: () => req('/orders')
+};
 });
