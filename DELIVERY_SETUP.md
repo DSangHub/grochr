@@ -1,0 +1,5 @@
+# Delivery integrations
+Set server-only Vercel environment variables UBER_CLIENT_ID, UBER_CLIENT_SECRET, UBER_CUSTOMER_ID, DOORDASH_DEVELOPER_ID, DOORDASH_KEY_ID, DOORDASH_SIGNING_SECRET, DELIVERY_TEST_ADMIN_KEY (random strong secret). Use sandbox credentials first.
+POST /api/delivery-quote with Authorization: Bearer <admin key> and JSON pickupAddress, dropoffAddress, pickupPhone, dropoffPhone, orderValueCents. Use actual authorized store and recipient details. Returns provider quotes independently; no dispatch. No browser integration until authenticated checkout, real store addresses, rate limits, payment confirmation, and idempotent persistent orders exist.
+Instacart Connect retailer onboarding requires an agreement, assigned server, scoped access token and service-options schema; INSTACART_BASE_URL and INSTACART_ACCESS_TOKEN enable the server helper only. No generic rate comparison is assumed.
+Dispatch helpers are not exposed via HTTP. Do not enable until payment, merchant fulfillment, quote expiry and duplicate prevention are implemented. Demo checkout remains unchanged.
